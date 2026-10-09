@@ -8,7 +8,7 @@ homepage: 'https://github.com/liusanbai/stash-tailscale'
 icon: 'https://avatars.githubusercontent.com/u/48932923?v=4'
 category: '🔀 Network'
 date: '2026-10-09'
-version: '1.0.0'
+version: '1.0.1'
 
 # ============================================================
 # Tailscale 代理节点
