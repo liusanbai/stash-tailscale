@@ -1,0 +1,75 @@
+name: '🔀 Tailscale'
+desc: |-
+  Tailscale 组网覆写，适用于所有设备。
+  首次使用需填入 auth-key（见下方注释），已认证设备无需填写。
+  从 URL 安装后各设备独立认证，互不影响。
+author: 'liusanbai'
+homepage: 'https://github.com/liusanbai/stash-tailscale'
+icon: 'https://avatars.githubusercontent.com/u/48932923?v=4'
+category: '🔀 Network'
+date: '2026-10-09'
+version: '1.0.0'
+
+# ============================================================
+# Tailscale 代理节点
+# ============================================================
+# Stash 覆写会把下面的代理节点合并到原订阅配置的 proxies 列表中。
+# 不需要修改原始订阅文件。
+#
+# ┌──────────────────────────────────────────────────────────┐
+# │  首次使用说明（重要）                                     │
+# │                                                          │
+# │  1. 此覆写发布在公开 GitHub，auth-key 已注释掉。           │
+# │  2. 首次使用时，请取消注释 auth-key 并填入你自己的 Key。   │
+# │     - 在 Tailscale 管理后台生成 Auth Key：               │
+# │       https://login.tailscale.com/admin/settings/keys     │
+# │     - 建议为每台设备单独生成一个 Key（不勾选 Reusable）。  │
+# │     - 不要使用 NAS 或其他设备的 Key。                     │
+# │  3. 设备加入 Tailnet 后，Stash 会持久化 Tailscale 状态。   │
+# │  4. 确认连接成功后，重新注释掉 auth-key 即可。             │
+# │     已认证的设备不需要 auth-key 也能保持连接。             │
+# │                                                          │
+# │  如果不想填 auth-key，也可以直接留空，                    │
+# │  然后在 Stash 的节点菜单中打开 Tailscale 页面完成交互登录。│
+# └──────────────────────────────────────────────────────────┘
+
+proxies:
+  - name: Tailscale
+
+    type: tailscale
+
+    # Tailscale 首次加入 Tailnet 使用的授权密钥。
+    # 已认证设备无需填写，注释掉即可。
+    # 首次使用请取消注释并替换为你自己的 Auth Key：
+    # auth-key: tskey-auth-xxxxxxxxxxxxx-CNTRL-xxxxxxxxxxxxxxxx
+
+    # Tailscale 管理后台显示的设备名称，也会用于 MagicDNS。
+    # 建议每台设备改成不同名字（小写英文+数字+短横线）。
+    # 不填则 Stash 自动生成。
+    # hostname: stash-device
+
+    # 是否关闭 Stash 自动处理 Tailnet 路由。
+    # false = 保持默认开启，Stash 自动处理：
+    #   - Tailscale 设备的 100.x.x.x 地址
+    #   - tail829c57.ts.net MagicDNS 域名
+    #   - Tailnet 中其他设备的 MagicDNS 地址
+    # 访问 NAS、Home Assistant、WebDAV 等内网服务时不需要额外写 rules。
+    auto-route-disabled: false
+
+# ============================================================
+# 代理组：把 Tailscale 节点包装成可选择的策略组
+# ============================================================
+proxy-groups:
+  - name: Tailscale
+    type: select
+    proxies:
+      - Tailscale
+
+# ============================================================
+# 规则：Tailscale 内网路由
+# ============================================================
+# 覆写机制：rules 数组会 prepend 到原配置 rules 最前面，优先级最高
+# 请将 *.ts.net 改成你自己的 Tailnet 域名
+rules:
+  - IP-CIDR,100.64.0.0/10,Tailscale,no-resolve
+  - DOMAIN-SUFFIX,*.ts.net,Tailscale
