@@ -34,7 +34,7 @@ version: '1.0.0'
 # └──────────────────────────────────────────────────────────┘
 
 proxies:
-  - name: Tailscale
+  - name: ts-node
 
     type: tailscale
 
@@ -63,13 +63,13 @@ proxy-groups:
   - name: Tailscale
     type: select
     proxies:
-      - Tailscale
+      - ts-node
 
 # ============================================================
 # 规则：Tailscale 内网路由
 # ============================================================
 # 覆写机制：rules 数组会 prepend 到原配置 rules 最前面，优先级最高
-# 请将 *.ts.net 改成你自己的 Tailnet 域名
+# 请将 ts.net 改成你自己的 Tailnet 域名
 rules:
   - IP-CIDR,100.64.0.0/10,Tailscale,no-resolve
-  - DOMAIN-SUFFIX,*.ts.net,Tailscale
+  - DOMAIN-SUFFIX,ts.net,Tailscale
