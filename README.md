@@ -11,40 +11,32 @@
 
 ## 安装
 
-在 Stash 中：
+> **注意：此覆写不能直接从 URL 安装使用。**
+>
+> 因为 auth-key 不能放在公开仓库里，而 Stash 中 URL 安装的覆写不支持本地编辑。
+> 所以必须**下载文件 → 本地填入 auth-key → 本地导入**。
 
-1. 配置 → 覆写 → `+` → 从 URL 下载
-2. 填入：
+### 步骤
 
-```
-https://github.com/liusanbai/stash-tailscale/releases/latest/download/Tailscale.stoverride
-```
+1. 下载 [Tailscale.stoverride](https://github.com/liusanbai/stash-tailscale/releases/latest/download/Tailscale.stoverride)
+2. 用文本编辑器打开，找到 `auth-key` 那行（约第 44 行），取消注释并填入你的 Auth Key：
 
-3. 确认覆写已启用
-4. 回首页点重载
+   ```yaml
+   auth-key: tskey-auth-xxxxxxxxxxxxx-CNTRL-xxxxxxxxxxxxxxxx
+   ```
 
-## 首次使用（重要）
-
-此覆写发布在公开 GitHub，**auth-key 已注释掉**。
-
-### 方式一：填入 auth-key
-
-1. 在 [Tailscale 管理后台](https://login.tailscale.com/admin/settings/keys) 生成 Auth Key
-2. 建议为每台设备单独生成（不勾选 Reusable）
-3. 在 Stash 中编辑覆写文件，取消注释 `auth-key` 行，填入你的 Key
-4. 重载配置，确认 Tailscale 节点连接成功
-5. 连接成功后，重新注释掉 `auth-key` 即可（已认证设备不需要重复认证）
-
-### 方式二：交互式登录
-
-不填 auth-key，直接在 Stash 的节点菜单中打开 Tailscale 页面，通过浏览器完成登录认证。
+3. 在 [Tailscale 管理后台](https://login.tailscale.com/admin/settings/keys) 生成 Auth Key（建议每台设备单独生成，不勾选 Reusable）
+4. 将修改后的文件通过 AirDrop / iCloud 发到手机
+5. Stash → 配置 → 覆写 → `+` → **从文件导入**（不是从 URL 下载）
+6. 启用覆写 → 回首页点重载
+7. 确认 Tailscale 节点上线后，可以把 auth-key 重新注释掉（已认证设备不需要重复认证）
 
 ## 规则说明
 
 | 规则 | 说明 |
 |---|---|
-| `IP-CIDR,100.64.0.0/10,Tailscale,no-resolve` | Tailnet 内网 IP 段 |
-| `DOMAIN-SUFFIX,*.ts.net,Tailscale` | MagicDNS 域名（请改成你自己的 Tailnet 域名） |
+| `IP-CIDR,100.64.0.0/10,Tailscale,no-resolve` | Tailnet 内网 IP 段（全网通用） |
+| `DOMAIN-SUFFIX,ts.net,Tailscale` | MagicDNS 域名（请改成你自己的 Tailnet 域名） |
 
 `auto-route-disabled: false` 表示 Stash 自动处理 Tailnet 路由，访问内网服务时不需要额外写 rules。
 
